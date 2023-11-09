@@ -11,5 +11,6 @@ namespace CatalogAPI.Infrastructure.DataBase
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Brand> Brands { get; set; }
     }
 }
