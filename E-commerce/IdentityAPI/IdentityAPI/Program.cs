@@ -1,6 +1,41 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using IdentityAPI.Infrastructure.DataBase;
 
+var builder = WebApplication.CreateBuilder(args);
+var databaseConnection = builder.Configuration.GetConnectionString("DbConnection");
+
+var secretKey = builder.Configuration.GetSection("JwtSettings:SecretKey").Value;
+var issuer = builder.Configuration.GetSection("JwtSettings:Issuer").Value;
+var audience = builder.Configuration.GetSection("JwtSettings:Audience").Value;
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 // Add services to the container.
+builder.Services.AddDbContext<Context>(options =>
+    options.UseNpgsql(databaseConnection, b => b.MigrationsAssembly("IdentityAPI")));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateLifetime = true,
+            IssuerSigningKey = signingKey,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    }
+);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

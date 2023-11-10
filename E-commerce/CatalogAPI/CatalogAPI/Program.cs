@@ -17,7 +17,7 @@ var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
 // Add services to the container.
 builder.Services.AddDbContext<Context>(options =>
-    options.UseNpgsql(databaseConnection, b => b.MigrationsAssembly("CatalogAPI")));
+    options.UseNpgsql(databaseConnection));
 
 builder.Services.AddAuthentication(options =>
 {
