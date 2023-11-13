@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace IdentityAPI.Infrastructure.Migrations
+namespace IdentityAPI.Migrations
 {
     [DbContext(typeof(Context))]
     partial class ContextModelSnapshot : ModelSnapshot
@@ -22,6 +22,32 @@ namespace IdentityAPI.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("IdentityAPI.Domain.Entities.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Apartment")
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("HouseNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("IdentityAPI.Domain.Entities.Token", b =>
                 {
                     b.Property<Guid>("Id")
@@ -30,6 +56,9 @@ namespace IdentityAPI.Infrastructure.Migrations
 
                     b.Property<bool>("IsExpired")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("TimeOfExpired")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("TokenType")
                         .HasColumnType("integer");
@@ -52,10 +81,21 @@ namespace IdentityAPI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("AddressId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset>("CreatedAtDateUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
 

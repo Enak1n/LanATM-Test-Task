@@ -1,7 +1,7 @@
-﻿using CatalogAPI.Infrastructure.DataBase;
-using CatalogAPI.Infrastructure.UnitOfWork.Interfaces;
+﻿using CatalogAPI.Domain.Intefaces.Repositories;
+using CatalogAPI.Infrastructure.DataBase;
 using CatalogAPI.Infrastructure.UnitOfWork.Repositories;
-using Microsoft.Extensions.Caching.Memory;
+using СatalogAPI.Domain.Intefaces.Repositpries;
 
 namespace CatalogAPI.Infrastructure.UnitOfWork
 {
@@ -13,11 +13,14 @@ namespace CatalogAPI.Infrastructure.UnitOfWork
 
         public IBrandRepository Brands { get; private set; }
 
+        public ICategoryRepository Categories { get; private set; }
+
         public UnitOfWork(Context context)
         {
             _context = context;
             Products = new ProductRepository(context);
             Brands = new BrandRepository(context);
+            Categories = new CategoryRepository(context);
         }
 
         public void Dispose()
@@ -25,9 +28,9 @@ namespace CatalogAPI.Infrastructure.UnitOfWork
             _context.Dispose();
         }
 
-        public Task SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            await _context.SaveChangesAsync();
         }
     }
 }

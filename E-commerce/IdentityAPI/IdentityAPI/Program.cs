@@ -3,6 +3,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IdentityAPI.Infrastructure.DataBase;
+using IdentityAPI.Infrastructure.UnitOfWork;
+using IdentityAPI.Service.Auth.Interfaces;
+using IdentityAPI.Service.TokenService;
+using IdentityAPI.Service.Auth;
+using Microsoft.AspNetCore.Identity;
+using AutoMapper;
+using Microsoft.OpenApi.Models;
+using IdentityAPI.Interfaces;
+using IdentityAPI.Services.Auth;
+using IdentityAPI.Service.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 var databaseConnection = builder.Configuration.GetConnectionString("DbConnection");
@@ -37,10 +47,42 @@ builder.Services.AddAuthentication(options =>
     }
 );
 
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = @"Enter access token",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            },
+          },
+          new List<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 

@@ -1,7 +1,6 @@
-﻿using CatalogAPI.Infrastructure.DataBase;
-using CatalogAPI.Infrastructure.UnitOfWork.Interfaces;
+﻿using CatalogAPI.Domain.Intefaces.Repositories;
+using CatalogAPI.Infrastructure.DataBase;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using System.Linq.Expressions;
 
 namespace CatalogAPI.Infrastructure.UnitOfWork.Repositories
@@ -21,6 +20,7 @@ namespace CatalogAPI.Infrastructure.UnitOfWork.Repositories
         public async Task AddAsync(TEntity entity)
         {
             await _dataBase.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
         public async Task EditAsync(TEntity entity)
@@ -29,9 +29,9 @@ namespace CatalogAPI.Infrastructure.UnitOfWork.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _dataBase.Where(predicate).ToListAsync();
+            return await _dataBase.Where(predicate).FirstOrDefaultAsync();
         }
 
         public async Task<List<TEntity>> GetAllAsync()
@@ -48,6 +48,7 @@ namespace CatalogAPI.Infrastructure.UnitOfWork.Repositories
         public async Task RemoveAsync(TEntity entity)
         {
             await Task.Run(() => _dataBase.Remove(entity));
+            await _context.SaveChangesAsync();
         }
     }
 }

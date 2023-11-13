@@ -1,7 +1,6 @@
 ﻿using CatalogAPI.Domain.Entities;
+using CatalogAPI.Domain.Intefaces.Repositories;
 using CatalogAPI.Infrastructure.DataBase;
-using CatalogAPI.Infrastructure.UnitOfWork.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace CatalogAPI.Infrastructure.UnitOfWork.Repositories
 {

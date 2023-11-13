@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using CatalogAPI.Infrastructure.DataBase;
-using CatalogAPI.Infrastructure.UnitOfWork.Interfaces;
 using CatalogAPI.Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CatalogAPI.Domain.Intefaces.Repositories;
+using CatalogAPI.Service.Intefaces;
+using CatalogAPI.Infrastructure.Business;
+using CatalogAPI.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,7 @@ var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
 // Add services to the container.
 builder.Services.AddDbContext<Context>(options =>
-    options.UseNpgsql(databaseConnection));
+    options.UseNpgsql(databaseConnection, b => b.MigrationsAssembly("CatalogAPI")));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -42,7 +45,10 @@ builder.Services.AddAuthentication(options =>
 );
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
