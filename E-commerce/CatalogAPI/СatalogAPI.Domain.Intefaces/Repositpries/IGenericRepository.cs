@@ -5,7 +5,7 @@ namespace CatalogAPI.Domain.Intefaces.Repositories
     public interface IGenericRepository<TEntity> where TEntity : class
     {
         Task<List<TEntity>> GetAllAsync();
-        Task<TEntity> GetByIdAsync(Guid id);
+        TEntity GetByIdAsync(Guid id);
         Task AddAsync(TEntity entity);
         Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task RemoveAsync(TEntity entity);

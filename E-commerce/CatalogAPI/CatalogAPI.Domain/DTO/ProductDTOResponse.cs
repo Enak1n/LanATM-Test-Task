@@ -13,8 +13,8 @@ namespace CatalogAPI.Domain.DTO
         public string? Description { get; set; }
         public double Price { get; set; }
         public bool IsSale { get; set; }
-        public CategoryDTOResponse? Category { get; set; }
+        public Guid? CategoryId { get; set; }
 
-        public BrandDTOResponse? Brand { get; set; }
+        public Guid? BrandId { get; set; }
     }
 }

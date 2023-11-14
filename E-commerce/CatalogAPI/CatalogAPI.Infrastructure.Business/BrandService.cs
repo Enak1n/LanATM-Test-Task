@@ -16,7 +16,7 @@ namespace CatalogAPI.Infrastructure.Business
 
         public async Task Create(Brand brand)
         {
-            if(await _unitOfWork.Brands.FindAsync(x => x.Name == brand.Name) != null)
+            if (await _unitOfWork.Brands.FindAsync(x => x.Name == brand.Name) != null)
             {
                 throw new UniqueException($"Value with name {brand.Name} already exist!");
             }
@@ -31,7 +31,7 @@ namespace CatalogAPI.Infrastructure.Business
 
         public async Task<Brand> GetById(Guid id)
         {
-            var brand = await _unitOfWork.Brands.GetByIdAsync(id);
+            var brand = _unitOfWork.Brands.GetByIdAsync(id);
 
             if (brand == null)
                 throw new NotFoundException($"Brand with Id {id} not found!");
@@ -51,12 +51,12 @@ namespace CatalogAPI.Infrastructure.Business
 
         public async Task Update(Brand brand)
         {
-            var res = await _unitOfWork.Brands.FindAsync(x => x.Id == brand.Id);
+            var res = _unitOfWork.Brands.GetByIdAsync(brand.Id);
 
             if (res == null)
                 throw new NotFoundException($"Brand wasn't found!");
 
-            if(await _unitOfWork.Brands.FindAsync(x => x.Name ==  brand.Name) != null && res.Name != brand.Name)
+            if (await _unitOfWork.Brands.FindAsync(x => x.Name == brand.Name) != null && brand.Name != brand.Name)
             {
                 throw new UniqueException($"Value with name {brand.Name} already exist!");
             }

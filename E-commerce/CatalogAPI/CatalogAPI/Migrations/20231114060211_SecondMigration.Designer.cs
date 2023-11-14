@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CatalogAPI.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231113090835_InitialCatalog")]
-    partial class InitialCatalog
+    [Migration("20231114060211_SecondMigration")]
+    partial class SecondMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,6 @@ namespace CatalogAPI.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PictureUrl")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");

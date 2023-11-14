@@ -10,23 +10,23 @@ namespace CatalogAPI.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class CategoryController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
-        public ProductController(IUnitOfWork unitOfWork, IProductService productService, IMapper mapper)
+        public CategoryController(IUnitOfWork unitOfWork, ICategoryService categoryService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _productService = productService;
+            _categoryService = categoryService;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _unitOfWork.Products.GetAllAsync());
+            return Ok(await _unitOfWork.Categories.GetAllAsync());
         }
 
         [HttpGet]
@@ -34,12 +34,12 @@ namespace CatalogAPI.Controllers
         {
             try
             {
-                var res = await _productService.GetById(id);
-                var response = _mapper.Map<ProductDTOResponse>(res);
+                var res = await _categoryService.GetById(id);
+                var response = _mapper.Map<CategoryDTOResponse>(res);
 
                 return Ok(response);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -50,29 +50,27 @@ namespace CatalogAPI.Controllers
         {
             try
             {
-                var res = await _productService.GetByName(name);
+                var res = await _categoryService.GetByName(name);
 
                 return Ok(res);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);  
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductDTORequest model)
+        public async Task<IActionResult> Create(CategoryDTORequest model)
         {
             try
             {
-                Product product = _mapper.Map<Product>(model);
+                Category product = _mapper.Map<Category>(model);
 
-                var res = await _productService.Create(product);
+                await _categoryService.Create(product);
                 await _unitOfWork.SaveChangesAsync();
 
-                var response = _mapper.Map<ProductDTOResponse>(res);
-
-                return Ok(response);
+                return Ok("Category success created!");
             }
             catch (UniqueException ex)
             {
@@ -85,17 +83,17 @@ namespace CatalogAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(Guid id, ProductDTORequest model)
+        public async Task<IActionResult> Update(Guid id, CategoryDTORequest model)
         {
             try
             {
-                Product product = _mapper.Map<Product>(model);
-                product.Id = id;
+                Category category = _mapper.Map<Category>(model);
+                category.Id = id;
 
-                await _productService.Update(product);
+                await _categoryService.Update(category);
                 await _unitOfWork.SaveChangesAsync();
 
-                return Ok("You updated your product!");
+                return Ok("You updated your category!");
             }
             catch (NotFoundException ex)
             {

@@ -23,7 +23,7 @@ namespace CatalogAPI.Infrastructure.Business
                 throw new UniqueException($"Product with name {product.Name} already exist!");
             }
 
-            if (await _unitOfWork.Brands.GetByIdAsync(product.BrandId) == null)
+            if (_unitOfWork.Brands.GetByIdAsync(product.BrandId) == null)
             {
                 throw new NotFoundException($"Brand with id {product.BrandId} not found!");
             }
@@ -44,7 +44,7 @@ namespace CatalogAPI.Infrastructure.Business
 
         public async Task<Product> GetById(Guid id)
         {
-            var res = await _unitOfWork.Products.GetByIdAsync(id);
+            var res = _unitOfWork.Products.GetByIdAsync(id);
 
             if(res == null)
                 throw new NotFoundException($"Brand with Id {id} not found!");
@@ -64,7 +64,7 @@ namespace CatalogAPI.Infrastructure.Business
 
         public async Task Update(Product product)
         {
-            var res = await _unitOfWork.Products.GetByIdAsync(product.Id);
+            var res = _unitOfWork.Products.GetByIdAsync(product.Id);
 
             if ((res.Name != product.Name) && await _unitOfWork.Products.FindAsync(x => x.Name == product.Name) != null)
             {
@@ -76,7 +76,7 @@ namespace CatalogAPI.Infrastructure.Business
                 throw new NotFoundException($"Product with Id {product.Id} was not founded!");
             }
 
-            if (await _unitOfWork.Brands.GetByIdAsync(product.BrandId) == null)
+            if (_unitOfWork.Brands.GetByIdAsync(product.BrandId) == null)
             {
                 throw new NotFoundException($"Brand with Id {product.BrandId} was not founded!");
             }

@@ -25,8 +25,7 @@ namespace CatalogAPI.Infrastructure.UnitOfWork.Repositories
 
         public async Task EditAsync(TEntity entity)
         {
-            _dataBase.Update(entity);
-            await _context.SaveChangesAsync();
+            await Task.Run(() => _dataBase.Update(entity));
         }
 
         public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate)
@@ -40,9 +39,18 @@ namespace CatalogAPI.Infrastructure.UnitOfWork.Repositories
             return entities;
         }
 
-        public async Task<TEntity> GetByIdAsync(Guid id)
+        public TEntity GetByIdAsync(Guid id)
         {
-            return await _dataBase.FindAsync(id);
+            var entity = _dataBase.Find(id);
+
+            if(entity == null)
+            {
+                return null;
+            }
+
+            _context.Entry(entity).State = EntityState.Detached;
+
+            return entity;
         }
 
         public async Task RemoveAsync(TEntity entity)

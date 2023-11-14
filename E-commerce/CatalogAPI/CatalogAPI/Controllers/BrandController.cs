@@ -3,6 +3,7 @@ using CatalogAPI.Domain.DTO;
 using CatalogAPI.Domain.Entities;
 using CatalogAPI.Domain.Exceptions;
 using CatalogAPI.Domain.Intefaces.Repositories;
+using CatalogAPI.Infrastructure.Business;
 using CatalogAPI.Service.Intefaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,23 +11,23 @@ namespace CatalogAPI.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class BrandController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProductService _productService;
+        private readonly IBrandService _brandService;
         private readonly IMapper _mapper;
 
-        public ProductController(IUnitOfWork unitOfWork, IProductService productService, IMapper mapper)
+        public BrandController(IUnitOfWork unitOfWork, IBrandService brandService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _productService = productService;
+            _brandService = brandService;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _unitOfWork.Products.GetAllAsync());
+            return Ok(await _unitOfWork.Brands.GetAllAsync());
         }
 
         [HttpGet]
@@ -34,45 +35,44 @@ namespace CatalogAPI.Controllers
         {
             try
             {
-                var res = await _productService.GetById(id);
-                var response = _mapper.Map<ProductDTOResponse>(res);
+                var res = await _brandService.GetById(id);
+                var response = _mapper.Map<BrandDTOResponse>(res);
 
                 return Ok(response);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetByName(string name)
         {
             try
             {
-                var res = await _productService.GetByName(name);
+                var res = await _brandService.GetByName(name);
 
                 return Ok(res);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);  
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductDTORequest model)
+        public async Task<IActionResult> Create(BrandDTORequest model)
         {
             try
             {
-                Product product = _mapper.Map<Product>(model);
+                Brand brand = _mapper.Map<Brand>(model);
 
-                var res = await _productService.Create(product);
+                await _brandService.Create(brand);
                 await _unitOfWork.SaveChangesAsync();
 
-                var response = _mapper.Map<ProductDTOResponse>(res);
-
-                return Ok(response);
+                return Ok("Brand succsessfully created!");
             }
             catch (UniqueException ex)
             {
@@ -84,18 +84,19 @@ namespace CatalogAPI.Controllers
             }
         }
 
+
         [HttpPut]
-        public async Task<IActionResult> Update(Guid id, ProductDTORequest model)
+        public async Task<IActionResult> Update(Guid id, BrandDTORequest model)
         {
             try
             {
-                Product product = _mapper.Map<Product>(model);
-                product.Id = id;
+                var brand = _mapper.Map<Brand>(model);
+                brand.Id = id;
 
-                await _productService.Update(product);
+                await _brandService.Update(brand);
                 await _unitOfWork.SaveChangesAsync();
 
-                return Ok("You updated your product!");
+                return Ok("You updated your brand!");
             }
             catch (NotFoundException ex)
             {
