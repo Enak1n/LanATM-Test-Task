@@ -9,8 +9,6 @@ namespace IdentityAPI.DataBase.Entities
         {
         }
 
-        public DbSet<Address> Addresses { get; set; }
-
         public DbSet<Token> Tokens { get; set; }
     }
 }

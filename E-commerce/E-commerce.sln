@@ -19,11 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogAPI.Service.Inteface
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogAPI.Infrastructure.Business", "CatalogAPI\CatalogAPI.Infrastructure.Business\CatalogAPI.Infrastructure.Business.csproj", "{03D084D2-0170-447F-AD82-3E6C2A6B0B05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderAPI.Domain", "OrderAPI\OrderAPI.Domain\OrderAPI.Domain.csproj", "{0EF53443-CE6B-4764-8574-CA783C973E96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderAPI.Domain", "OrderAPI\OrderAPI.Domain\OrderAPI.Domain.csproj", "{0EF53443-CE6B-4764-8574-CA783C973E96}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OrderAPI", "OrderAPI", "{7C917434-C1AE-444B-A6D9-AC6C46102309}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityAPI", "IdentityAPI\IdentityAPI.csproj", "{9EAB4A72-F780-49C2-A283-A9615474D015}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityAPI", "IdentityAPI\IdentityAPI.csproj", "{9EAB4A72-F780-49C2-A283-A9615474D015}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infastructure\Infrastructure.csproj", "{20D44C3B-EDF2-4DE1-966F-4853C5451D75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{9EAB4A72-F780-49C2-A283-A9615474D015}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EAB4A72-F780-49C2-A283-A9615474D015}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EAB4A72-F780-49C2-A283-A9615474D015}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20D44C3B-EDF2-4DE1-966F-4853C5451D75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20D44C3B-EDF2-4DE1-966F-4853C5451D75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20D44C3B-EDF2-4DE1-966F-4853C5451D75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20D44C3B-EDF2-4DE1-966F-4853C5451D75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,6 +8,8 @@ namespace IdentityAPI.DataBase
     {
         private readonly Context _context;
 
+        public override Context Context { get => _context; }
+
         public CustomUserStore(Context context) : base(context)
         {
             AutoSaveChanges = true;
@@ -51,18 +53,6 @@ namespace IdentityAPI.DataBase
         public async Task<Token> GetToken(string value)
         {
             return _context.Tokens.FirstOrDefault(token => token.Value == value);
-        }
-
-        public override async Task<User?> FindByIdAsync(string userId, CancellationToken cancellationToken = default)
-        {
-            var id = ConvertIdFromString(userId);
-            return await _context.Users.Include(x => x.Address)
-                                       .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
-        }
-
-        protected override async Task<User?> FindUserAsync(string userId, CancellationToken cancellationToken)
-        {
-            return await Users.Include(x => x.Address).SingleOrDefaultAsync(u => u.Id.Equals(userId), cancellationToken);
         }
     }
 }
