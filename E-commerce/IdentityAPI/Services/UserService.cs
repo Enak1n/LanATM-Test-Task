@@ -90,11 +90,6 @@ namespace IdentityAPI.Services
                 return new ErrorsResponse { Errors = result.Errors };
             }
 
-            if (userRole.Name == Role.Buyer.ToString())
-            {
-                await CreateCart(new Guid(user.Id));
-            }
-
             if (userRole.Name == Role.Courier.ToString())
             {
                 await CreateCourier(user);
@@ -168,12 +163,6 @@ namespace IdentityAPI.Services
         public async Task<bool> TokenIsActive(string token)
         {
             return (await Store.GetToken(token)).IsActive;
-        }
-
-        private async Task CreateCart(Guid userId)
-        {
-            await RabbitMQClient.Request<CartDTORabbitMQ>(_bus, new(userId),
-                new($"{_configuration["RabbitMQ:Host"]}/createCartQueue"));
         }
 
         private async Task CreateCourier(User user)
