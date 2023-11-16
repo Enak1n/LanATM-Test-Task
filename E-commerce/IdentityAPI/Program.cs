@@ -2,7 +2,6 @@ using IdentityAPI.DataBase;
 using IdentityAPI.DataBase.Entities;
 using IdentityAPI.Helpers;
 using IdentityAPI.Services;
-using Infrastructure;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -75,20 +74,6 @@ builder.Services.AddAuthorization(options =>
     {
         builder.RequireRole(Role.Salesman.ToString());
     });
-});
-
-var rabbitMQSettings = builder.Configuration.GetSection("RabbitMQ");
-builder.Services.AddMassTransit(x =>
-{
-    x.AddRequestClient<RabbitMQClient>();
-    x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
-    {
-        cfg.Host(rabbitMQSettings["Host"], settings =>
-        {
-            settings.Username(rabbitMQSettings["Username"]);
-            settings.Password(rabbitMQSettings["Password"]);
-        });
-    }));
 });
 
 builder.Services.AddScoped<ICustomUserStore, CustomUserStore>();

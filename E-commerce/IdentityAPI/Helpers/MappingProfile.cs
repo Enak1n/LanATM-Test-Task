@@ -4,7 +4,6 @@ using IdentityAPI.Models.Requests;
 using IdentityAPI.Models.Responses;
 using IdentityAPI.Models;
 using IdentityAPI.Models.DTO.Requests;
-using Infrastructure.DTO;
 
 namespace IdentityAPI.Helpers
 {
@@ -18,7 +17,6 @@ namespace IdentityAPI.Helpers
             CreateMap<UserDTORequest, User>();
             CreateMap<User, UserDTOResponse>();
             CreateMap<User, CourierDTO>();
-            CreateMap<User, CourierDTORabbitMQ>();
         }
     }
 }

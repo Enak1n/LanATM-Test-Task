@@ -5,7 +5,7 @@ using СatalogAPI.Domain.Intefaces.Repositpries;
 
 namespace CatalogAPI.Infrastructure.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly Context _context;
 

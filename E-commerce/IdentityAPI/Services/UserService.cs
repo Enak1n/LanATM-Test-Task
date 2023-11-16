@@ -10,16 +10,12 @@ using AutoMapper;
 using IdentityAPI.Models.Requests;
 using IdentityAPI.Models.Responses;
 using MassTransit;
-using Infrastructure;
-using Infrastructure.DTO;
 
 namespace IdentityAPI.Services
 {
     public class UserService : UserManager<User>, IUserService
     {
         private readonly IConfiguration _configuration;
-
-        private readonly IBusControl _bus;
 
         private readonly RoleManager<IdentityRole> _roleManager;
 
@@ -28,7 +24,6 @@ namespace IdentityAPI.Services
         public new ICustomUserStore Store { get; init; }
 
         public UserService(IConfiguration configuration,
-                            IBusControl bus,
                             ICustomUserStore store,
                             IOptions<IdentityOptions> optionsAccessor,
                             IPasswordHasher<User> passwordHasher,
@@ -50,7 +45,6 @@ namespace IdentityAPI.Services
                                                                       logger)
         {
             _configuration = configuration;
-            _bus = bus;
             Store = store;
             _mapper = mapper;
             _roleManager = roleManager;
@@ -88,11 +82,6 @@ namespace IdentityAPI.Services
             if (!result.Succeeded)
             {
                 return new ErrorsResponse { Errors = result.Errors };
-            }
-
-            if (userRole.Name == Role.Courier.ToString())
-            {
-                await CreateCourier(user);
             }
 
             try
@@ -153,11 +142,6 @@ namespace IdentityAPI.Services
         public async Task Logout(Guid userId)
         {
             var blockedTokens = await Store.BlockTokens(userId);
-
-            if (blockedTokens.Count > 0 && blockedTokens[0] != null)
-            {
-                await SendMessageAboutDeletingToken(blockedTokens[0].Value);
-            }
         }
 
         public async Task<bool> TokenIsActive(string token)
@@ -165,25 +149,6 @@ namespace IdentityAPI.Services
             return (await Store.GetToken(token)).IsActive;
         }
 
-        private async Task CreateCourier(User user)
-        {
-            var courier = _mapper.Map<CourierDTORabbitMQ>(user);
-
-            await RabbitMQClient.Request(_bus, courier,
-                new($"{_configuration["RabbitMQ:Host"]}/createCourierQueue"));
-        }
-
-        private async Task SendMessageAboutAddingToken(string token)
-        {
-            await RabbitMQClient.Request<TokenDTORAbbitMQ>(_bus, new() { Value = token },
-                new($"{_configuration["RabbitMQ:Host"]}/addTokenQueue"));
-        }
-
-        private async Task SendMessageAboutDeletingToken(string tokenValue)
-        {
-            await RabbitMQClient.Request<TokenDTORAbbitMQ>(_bus, new() { Value = tokenValue },
-                new($"{_configuration["RabbitMQ:Host"]}/deleteTokenQueue"));
-        }
 
         private async Task<LoginDTOResponse> Login(User user, string password)
         {
@@ -210,14 +175,8 @@ namespace IdentityAPI.Services
 
             var refreshToken = JwtTokenManager.GenerateJwtRefreshToken(_configuration, new List<Claim>() { claims[0] });
             var accessToken = JwtTokenManager.GenerateJwtAccessToken(_configuration, claims);
-            await SendMessageAboutAddingToken(accessToken);
 
             var blockedTokens = await Store.BlockTokens(userId);
-
-            if (blockedTokens.Count > 0 && blockedTokens[0] != null)
-            {
-                await SendMessageAboutDeletingToken(blockedTokens[0].Value);
-            }
 
             await Store.AddRangeTokenAsync(new List<Token>()
             {
