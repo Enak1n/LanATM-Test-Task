@@ -102,7 +102,7 @@ namespace OrderAPI.Service.Business
                 throw new Exception("Order has been canceled!");
 
 
-            if (!order.IsReady)
+            if (order.IsReady)
                 throw new Exception("Order has been already readied!");
 
             order.IsReady = true;
@@ -124,10 +124,10 @@ namespace OrderAPI.Service.Business
                 throw new Exception("Order has been already received!");
 
             if (order.IsCanceled)
-                throw new Exception("Order has been canceled");
+                throw new Exception("Order has been canceled!");
 
-            if (!order.IsPaymented)
-                throw new Exception("The order has not been paid");
+            if (order.IsPaymented)
+                throw new Exception("The order has not been paid!");
 
             order.IsReceived = true;
 

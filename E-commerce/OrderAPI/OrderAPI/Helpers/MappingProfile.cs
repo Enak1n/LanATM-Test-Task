@@ -11,9 +11,11 @@ namespace OrderAPI.Helpers
         {
             CreateMap<Order, OrderDTOResponse>();
             CreateMap<OrderDTOResponse, Order>();
-
             CreateMap<OrderDTORequest, Order>();
             CreateMap<Order, OrderDTORequest>();
+
+            CreateMap<Address, AddressDTORequest>();
+            CreateMap<AddressDTORequest, Address>();
         }
     }
 }

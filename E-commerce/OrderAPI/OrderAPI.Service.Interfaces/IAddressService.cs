@@ -4,8 +4,8 @@ namespace OrderAPI.Service.Interfaces
 {
     public interface IAddressService
     {
-        List<Order> GetAll();
-        Order GetById(Guid id);
-        Task<Order> Create(Order order);
+        Task<List<Address>> GetAll();
+        Task<Address> GetById(Guid id);
+        Task<Address> Create(Address address);
     }
 }

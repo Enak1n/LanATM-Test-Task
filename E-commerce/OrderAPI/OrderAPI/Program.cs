@@ -49,10 +49,16 @@ builder.Services.AddAuthorization(options =>
     {
         builder.RequireRole(Role.Salesman.ToString(), Role.Courier.ToString());
     });
+
+    options.AddPolicy("AccessToAddress", builder =>
+    {
+        builder.RequireRole(Role.Buyer.ToString());
+    });
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
