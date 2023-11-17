@@ -9,6 +9,7 @@ using CatalogAPI.Service.Intefaces;
 using CatalogAPI.Infrastructure.Business;
 using CatalogAPI.Helpers;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +81,9 @@ builder.Services.AddSwaggerGen(options =>
           new List<string>()
         }
     });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 var app = builder.Build();

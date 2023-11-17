@@ -11,6 +11,7 @@ namespace CatalogAPI.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
+    [Produces("application/json")]
     public class BrandController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -24,13 +25,28 @@ namespace CatalogAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get all brands from data base
+        /// </summary>
+        /// <returns>List of brands</returns>
+        /// <response code="200">Returns the list of all brands</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _unitOfWork.Brands.GetAllAsync());
         }
 
+        /// <summary>
+        /// Get brand by id from data base
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Return brand</returns>
+        /// <response code="200">Returns the brand</response>
+        /// <response code="404">Brand with this id not found</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
@@ -40,14 +56,22 @@ namespace CatalogAPI.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (NotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
         }
 
-
+        /// <summary>
+        /// Get brand by name from data base
+        /// </summary>
+        /// <param name="name">Name of brand</param>
+        /// <returns>Brand with current name</returns>
+        /// <response code="200">Returns the brand</response>
+        /// <response code="404">Brand with this name not found</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByName(string name)
         {
             try
@@ -56,13 +80,22 @@ namespace CatalogAPI.Controllers
 
                 return Ok(res);
             }
-            catch (Exception ex)
+            catch (NotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Create new brand 
+        /// </summary>
+        /// <param name="model">Brand request</param>
+        /// <returns>Status about creating brand</returns>
+        /// <response code="200">Successfully created</response>
+        /// <response code="400">Brand already exist</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Create(BrandDTORequest model)
         {
             try
@@ -78,14 +111,21 @@ namespace CatalogAPI.Controllers
             {
                 return Conflict(ex.Message);
             }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
         }
 
-
+        /// <summary>
+        /// Update existing brand in data base
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <param name="model">Brand request</param>
+        /// <returns>Status about updating brand</returns>
+        /// <response code="200">Successfully update</response>
+        /// <response code="400">Brand not found</response>
+        /// <response code="409">Brand already exist</response>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(Guid id, BrandDTORequest model)
         {
             try
