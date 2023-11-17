@@ -8,11 +8,13 @@ namespace OrderAPI.Infrastructure.UnitOfWork
     {
         private readonly Context _context;
         public IOrderRepository Orders { get; private set; }
+        public IAddressRepository Addresses { get; private set; }
 
         public UnitOfWork(Context context)
         {
             _context = context;
             Orders = new OrderRepository(context);
+            Addresses = new AddressRepository(context);
         }
 
         public async Task SaveChangesAsync()

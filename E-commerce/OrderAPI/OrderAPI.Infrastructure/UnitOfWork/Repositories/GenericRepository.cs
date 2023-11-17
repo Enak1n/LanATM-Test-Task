@@ -38,7 +38,7 @@ namespace OrderAPI.Infrastructure.UnitOfWork.Repositories
             return entities;
         }
 
-        public TEntity GetByIdAsync(Guid id)
+        public async Task<TEntity> GetByIdAsync(Guid id)
         {
             var entity = _dataBase.Find(id);
 

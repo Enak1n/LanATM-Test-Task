@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OrderAPI.Domain.Interfaces\OrderAPI.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\OrderAPI.Service.Interfaces\OrderAPI.Service.Interfaces.csproj" />
   </ItemGroup>
 

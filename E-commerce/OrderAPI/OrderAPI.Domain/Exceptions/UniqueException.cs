@@ -1,4 +1,4 @@
-﻿namespace CatalogAPI.Domain.Exceptions
+﻿namespace OrderAPI.Domain.Exceptions
 {
     public class UniqueException : Exception
     {

@@ -10,5 +10,6 @@ namespace OrderAPI.Infrastructure.DataBase
         }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }
