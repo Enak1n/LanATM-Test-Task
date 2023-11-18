@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CatalogAPI.Controllers
 {
     [Route("[controller]/[action]")]
+    [Produces("application/json")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -23,13 +24,28 @@ namespace CatalogAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get all categories from data base
+        /// </summary>
+        /// <returns>Status response</returns>
+        /// <response code="200">Returns the list of all brands</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _unitOfWork.Categories.GetAllAsync());
         }
 
+        /// <summary>
+        /// Get category by id from data base
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Status about getting category</returns>
+        /// <response code="200">Returns the category</response>
+        /// <response code="400">Return meesage with error</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
@@ -45,7 +61,16 @@ namespace CatalogAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get category by name from Data base
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <returns>Status about getting category</returns>
+        /// <response code="200">Returns the category</response>
+        /// <response code="400">Return meesage with error</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByName(string name)
         {
             try
@@ -60,7 +85,18 @@ namespace CatalogAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Create a new brand
+        /// </summary>
+        /// <param name="model">Brand</param>
+        /// <returns>Status about creating category</returns>
+        /// <response code="200">Return message about success</response>
+        /// <response code="400">Return error message while creating category</response> 
+        /// <response code="409">Category with some properties already exist</response> 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Create(CategoryDTORequest model)
         {
             try
@@ -76,13 +112,25 @@ namespace CatalogAPI.Controllers
             {
                 return Conflict(ex.Message);
             }
-            catch (NotFoundException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Updare existed category
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <param name="model">New category</param>
+        /// <returns>Status about updating category</returns>
+        /// <response code="200">Return message about success</response>
+        /// <response code="404">Category was not foud in data base</response> 
+        /// <response code="409">Category with some properties already exist</response> 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Update(Guid id, CategoryDTORequest model)
         {
             try

@@ -3,7 +3,6 @@ using CatalogAPI.Domain.DTO;
 using CatalogAPI.Domain.Entities;
 using CatalogAPI.Domain.Exceptions;
 using CatalogAPI.Domain.Intefaces.Repositories;
-using CatalogAPI.Infrastructure.Business;
 using CatalogAPI.Service.Intefaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,7 +40,7 @@ namespace CatalogAPI.Controllers
         /// Get brand by id from data base
         /// </summary>
         /// <param name="id">Id</param>
-        /// <returns>Return brand</returns>
+        /// <returns>Status about getting brand</returns>
         /// <response code="200">Returns the brand</response>
         /// <response code="404">Brand with this id not found</response>
         [HttpGet]
@@ -66,7 +65,7 @@ namespace CatalogAPI.Controllers
         /// Get brand by name from data base
         /// </summary>
         /// <param name="name">Name of brand</param>
-        /// <returns>Brand with current name</returns>
+        /// <returns>Status about getting brand</returns>
         /// <response code="200">Returns the brand</response>
         /// <response code="404">Brand with this name not found</response>
         [HttpGet]
