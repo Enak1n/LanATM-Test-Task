@@ -8,5 +8,6 @@
         public DateTime DateOfCreation { get; set; }
         public bool IsDelivered { get; set; } = false;
         public bool IsLate { get; set; } = false;
+        public bool IsPickUp = false;
     }
 }

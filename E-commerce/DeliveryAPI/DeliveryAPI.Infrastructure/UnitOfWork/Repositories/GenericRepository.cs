@@ -39,7 +39,7 @@ namespace DeliveryAPI.Infrastructure.UnitOfWork.Repositories
             return entities;
         }
 
-        public TEntity GetByIdAsync(Guid id)
+        public async Task<TEntity> GetByIdAsync(Guid id)
         {
             var entity = _dataBase.Find(id);
 
@@ -53,10 +53,10 @@ namespace DeliveryAPI.Infrastructure.UnitOfWork.Repositories
             return entity;
         }
 
-        public async Task RemoveAsync(TEntity entity)
-        {
-            await Task.Run(() => _dataBase.Remove(entity));
-            await _context.SaveChangesAsync();
-        }
+    public async Task RemoveAsync(TEntity entity)
+    {
+        await Task.Run(() => _dataBase.Remove(entity));
+        await _context.SaveChangesAsync();
     }
+}
 }
