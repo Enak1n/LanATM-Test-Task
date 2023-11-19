@@ -46,6 +46,22 @@ builder.Services.AddAuthentication(options =>
     }
 );
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AccessToGetAllCatalog", builder =>
+    {
+        builder.RequireRole(
+            Role.Salesman.ToString(),
+            Role.Courier.ToString(),
+            Role.Buyer.ToString());
+    });
+
+    options.AddPolicy("ChangingOfCatalog", builder =>
+    {
+        builder.RequireRole(Role.Salesman.ToString());
+    });
+});
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IProductService, ProductService>();

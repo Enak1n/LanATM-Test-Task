@@ -3,13 +3,16 @@ using CatalogAPI.Domain.DTO;
 using CatalogAPI.Domain.Entities;
 using CatalogAPI.Domain.Exceptions;
 using CatalogAPI.Domain.Intefaces.Repositories;
+using CatalogAPI.Infrastructure.Business;
 using CatalogAPI.Service.Intefaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogAPI.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
+    [Authorize(Policy = "ChangingOfCatalog")]
     [Produces("application/json")]
     public class BrandController : ControllerBase
     {
@@ -43,7 +46,7 @@ namespace CatalogAPI.Controllers
         /// <returns>Status about getting brand</returns>
         /// <response code="200">Returns the brand</response>
         /// <response code="404">Brand with this id not found</response>
-        [HttpGet]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id)
@@ -68,7 +71,7 @@ namespace CatalogAPI.Controllers
         /// <returns>Status about getting brand</returns>
         /// <response code="200">Returns the brand</response>
         /// <response code="404">Brand with this name not found</response>
-        [HttpGet]
+        [HttpGet("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByName(string name)
@@ -144,6 +147,36 @@ namespace CatalogAPI.Controllers
             catch (UniqueException ex)
             {
                 return Conflict(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Delete brnad
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Status about deleting</returns>
+        /// <response code="200">Return message about succsessful delete</response>  
+        /// <response code="404">Return error</response>  
+        /// <response code="400">Return error</response>  
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                await _brandService.Delete(id);
+
+                return Ok("Category succsessfully deleted!");
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

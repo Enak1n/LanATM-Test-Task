@@ -9,5 +9,6 @@ namespace CatalogAPI.Service.Intefaces
         Task<Brand> GetByName(string name);
         Task Create(Brand brand);
         Task Update(Brand brand);
+        Task Delete(Guid id);
     }
 }

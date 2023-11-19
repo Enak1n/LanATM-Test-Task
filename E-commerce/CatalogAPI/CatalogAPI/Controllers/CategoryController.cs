@@ -4,12 +4,14 @@ using CatalogAPI.Domain.Entities;
 using CatalogAPI.Domain.Exceptions;
 using CatalogAPI.Domain.Intefaces.Repositories;
 using CatalogAPI.Service.Intefaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogAPI.Controllers
 {
     [Route("[controller]/[action]")]
     [Produces("application/json")]
+    [Authorize(Policy = "ChangingOfCatalog")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -43,7 +45,7 @@ namespace CatalogAPI.Controllers
         /// <returns>Status about getting category</returns>
         /// <response code="200">Returns the category</response>
         /// <response code="400">Return meesage with error</response>
-        [HttpGet]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetById(Guid id)
@@ -68,7 +70,7 @@ namespace CatalogAPI.Controllers
         /// <returns>Status about getting category</returns>
         /// <response code="200">Returns the category</response>
         /// <response code="400">Return meesage with error</response>
-        [HttpGet]
+        [HttpGet("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByName(string name)
@@ -119,7 +121,7 @@ namespace CatalogAPI.Controllers
         }
 
         /// <summary>
-        /// Updare existed category
+        /// Update existed category
         /// </summary>
         /// <param name="id">Id</param>
         /// <param name="model">New category</param>
@@ -150,6 +152,36 @@ namespace CatalogAPI.Controllers
             catch (UniqueException ex)
             {
                 return Conflict(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Delete category
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Status about deleting</returns>
+        /// <response code="200">Return message about succsessful delete</response>  
+        /// <response code="404">Return error</response>  
+        /// <response code="400">Return error</response>  
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                await _categoryService.Delete(id);
+
+                return Ok("Category succsessfully deleted!");
+            }
+            catch(NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

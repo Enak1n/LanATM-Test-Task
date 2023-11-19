@@ -24,6 +24,16 @@ namespace CatalogAPI.Infrastructure.Business
             await _unitOfWork.Brands.AddAsync(brand);
         }
 
+        public async Task Delete(Guid id)
+        {
+            var brand = _unitOfWork.Brands.GetByIdAsync(id);
+
+            if (brand == null)
+                throw new NotFoundException($"Brand with Id {id} not found!");
+
+            await _unitOfWork.Brands.RemoveAsync(brand);
+        }
+
         public async Task<List<Brand>> GetAll()
         {
             return await _unitOfWork.Brands.GetAllAsync();

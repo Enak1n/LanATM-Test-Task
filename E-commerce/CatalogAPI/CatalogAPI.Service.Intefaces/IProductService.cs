@@ -9,5 +9,6 @@ namespace CatalogAPI.Service.Intefaces
         Task<Product> GetByName(string name);
         Task<Product> Create(Product product);
         Task Update(Product product);
+        Task DeleteById(Guid id);
     }
 }

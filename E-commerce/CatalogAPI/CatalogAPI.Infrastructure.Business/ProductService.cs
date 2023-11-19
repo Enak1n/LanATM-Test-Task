@@ -37,6 +37,16 @@ namespace CatalogAPI.Infrastructure.Business
             return product;
         }
 
+        public async Task DeleteById(Guid id)
+        {
+            var product = _unitOfWork.Products.GetByIdAsync(id);
+
+            if (product == null)
+                throw new NotFoundException($"Product with Id {id} not found!");
+
+            await _unitOfWork.Products.RemoveAsync(product);
+        }
+
         public async Task<List<Product>> GetAll()
         {
             return await _unitOfWork.Products.GetAllAsync();

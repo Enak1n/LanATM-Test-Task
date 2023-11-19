@@ -25,6 +25,16 @@ namespace CatalogAPI.Infrastructure.Business
             await _unitOfWork.Categories.AddAsync(category);
         }
 
+        public async Task Delete(Guid id)
+        {
+            var category = _unitOfWork.Categories.GetByIdAsync(id);
+
+            if (category == null)
+                throw new NotFoundException($"Category with Id {id} not found!");
+
+            await _unitOfWork.Categories.RemoveAsync(category);
+        }
+
         public async Task<List<Category>> GetAll()
         {
             return (await _unitOfWork.Categories.GetAllAsync());
