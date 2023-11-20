@@ -3,7 +3,6 @@ using CatalogAPI.Domain.DTO;
 using CatalogAPI.Domain.Entities;
 using CatalogAPI.Domain.Exceptions;
 using CatalogAPI.Domain.Intefaces.Repositories;
-using CatalogAPI.Infrastructure.Business;
 using CatalogAPI.Service.Intefaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -79,7 +78,9 @@ namespace CatalogAPI.Controllers
             {
                 var res = await _productService.GetByName(name);
 
-                return Ok(res);
+                var response = _mapper.Map<ProductDTOResponse>(res);
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -143,6 +144,8 @@ namespace CatalogAPI.Controllers
             {
                 Product product = _mapper.Map<Product>(model);
                 product.Id = id;
+                product.BrandId = model.BrandId;
+                product.CategoryId = model.BrandId;
 
                 await _productService.Update(product);
                 await _unitOfWork.SaveChangesAsync();

@@ -8,6 +8,10 @@ namespace IdentityAPI.Models.Requests
         [EmailAddress(ErrorMessage = "Incorrect Email")]
         public string? Email { get; set; }
 
+        [Required]
+        public string Name { get; set; }
+        public string? Surname { get; set; }
+
         public DateTime? BirthDate { get; set; }
 
         [Required(ErrorMessage = "Password is required")]

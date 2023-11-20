@@ -26,7 +26,7 @@ namespace IdentityAPI.Helpers
                             issuer: configuration["JwtSettings:Issuer"],
                             audience: configuration["JwtSettings:Audience"],
                             claims: claims,
-                            expires: DateTime.UtcNow.AddMinutes(2),
+                            expires: DateTime.UtcNow.AddMinutes(15),
                             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
                             );
 

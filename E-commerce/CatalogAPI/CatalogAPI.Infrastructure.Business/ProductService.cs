@@ -83,17 +83,17 @@ namespace CatalogAPI.Infrastructure.Business
 
             if (res == null)
             {
-                throw new NotFoundException($"Product with Id {product.Id} was not founded!");
+                throw new NotFoundException($"Product with Id {product.Id} not found!");
             }
 
             if (_unitOfWork.Brands.GetByIdAsync(product.BrandId) == null)
             {
-                throw new NotFoundException($"Brand with Id {product.BrandId} was not founded!");
+                throw new NotFoundException($"Brand with Id {product.BrandId} not found!");
             }
 
             if (_unitOfWork.Categories.GetByIdAsync(product.CategoryId) == null)
             {
-                throw new NotFoundException($"Category with Id {product.CategoryId} was not founded!");
+                throw new NotFoundException($"Category with Id {product.CategoryId} not found!");
             }
 
             await _unitOfWork.Products.EditAsync(product);
