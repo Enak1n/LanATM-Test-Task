@@ -12,6 +12,7 @@ namespace OrderAPI.Controllers
 {
     [Authorize(Policy = "AccessToOrders")]
     [Route("[controller]/[action]")]
+    [Produces("application/json")]
     [ApiController]
     public class OrderController : ControllerBase
     {
@@ -26,7 +27,15 @@ namespace OrderAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get list of orders
+        /// </summary>
+        /// <returns>Status about getting orders</returns>
+        /// <response code="200">Return the list of all orders</response>
+        /// <response code="400">Return the error</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -41,7 +50,15 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get list order by id
+        /// </summary>
+        /// <returns>Status about getting order</returns>
+        /// <response code="200">Return the order</response>
+        /// <response code="400">Return the error</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
@@ -57,7 +74,15 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Create new order
+        /// </summary>
+        /// <returns>Status about creating order</returns>
+        /// <response code="200">Return the creating order</response>
+        /// <response code="400">Return the error</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateOrder(OrderDTORequest order)
         {
             try
@@ -74,7 +99,17 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Cancel the order
+        /// </summary>
+        /// <returns>Status about cancelling order</returns>
+        /// <response code="200">Return the cancelling order</response>
+        /// <response code="404">Order not found</response>
+        /// <response code="400">Return the error</response>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Cancel(Guid id)
         {
             try
@@ -95,7 +130,17 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Pay for order
+        /// </summary>
+        /// <returns>Status about paying order</returns>
+        /// <response code="200">Return the order which we paid</response>
+        /// <response code="404">Order not found</response>
+        /// <response code="400">Return the error</response>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> IsPaymented(Guid id)
         {
             try
@@ -116,7 +161,17 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Ready order
+        /// </summary>
+        /// <returns>Status of the order preparation</returns>
+        /// <response code="200">Return the order which we prepared</response>
+        /// <response code="404">Order not found</response>
+        /// <response code="400">Return the error</response>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> IsReady(Guid id)
         {
             try
@@ -137,7 +192,17 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Receive order
+        /// </summary>
+        /// <returns>Status about receiveing the order</returns>
+        /// <response code="200">Return the order which we received</response>
+        /// <response code="404">Order not found</response>
+        /// <response code="400">Return the error</response>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> IsReceived(Guid id)
         {
             try

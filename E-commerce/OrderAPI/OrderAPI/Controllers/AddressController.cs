@@ -11,6 +11,7 @@ namespace OrderAPI.Controllers
 {
     [Authorize(Policy = "AccessToAddress")]
     [Route("[controller]/[action]")]
+    [Produces("application/json")]
     [ApiController]
     public class AddressController : ControllerBase
     {
@@ -25,7 +26,15 @@ namespace OrderAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get list of addresses
+        /// </summary>
+        /// <returns>Status about getting addresses</returns>
+        /// <response code="200">Return the list of all addresses</response>
+        /// <response code="400">Return the error</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -40,7 +49,18 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get address from data base by id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Status about getting address</returns>
+        /// <response code="200">Return the address</response>
+        /// <response code="404">Address with current id not found</response>
+        /// <response code="400">Return the error while getting address</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
@@ -58,7 +78,16 @@ namespace OrderAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get address from data base by id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Status about creating address</returns>
+        /// <response code="200">Return the address</response>
+        /// <response code="400">Return the error while creating address</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create(AddressDTORequest addressDTOrequest)
         {
             try
@@ -73,7 +102,5 @@ namespace OrderAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
     }
 }

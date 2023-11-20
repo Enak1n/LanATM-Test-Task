@@ -8,6 +8,7 @@ using OrderAPI.Infrastructure.DataBase;
 using OrderAPI.Infrastructure.UnitOfWork;
 using OrderAPI.Service.Business;
 using OrderAPI.Service.Interfaces;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -90,6 +91,9 @@ builder.Services.AddSwaggerGen(options =>
           new List<string>()
         }
     });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 var app = builder.Build();
