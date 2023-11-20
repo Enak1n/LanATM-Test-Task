@@ -1,46 +1,32 @@
-using IdentityAPI.DataBase;
-using IdentityAPI.DataBase.Entities;
-using IdentityAPI.Helpers;
-using IdentityAPI.Services;
+using DeliveryAPI.Consumers;
+using DeliveryAPI.Domain.Interfaces.Repositories;
+using DeliveryAPI.Helpers;
+using DeliveryAPI.Infrastructure.DataBase;
+using DeliveryAPI.Infrastructure.UnitOfWork;
+using DeliveryAPI.Service.Business;
+using DeliveryAPI.Service.Interfaces;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rabbit;
+using System.Data;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var databaseConnection = builder.Configuration.GetConnectionString("DbConnection");
 
 var secretKey = builder.Configuration.GetSection("JwtSettings:SecretKey").Value;
 var issuer = builder.Configuration.GetSection("JwtSettings:Issuer").Value;
 var audience = builder.Configuration.GetSection("JwtSettings:Audience").Value;
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
 // Add services to the container.
 builder.Services.AddDbContext<Context>(options =>
-    options.UseNpgsql(databaseConnection, b => b.MigrationsAssembly("IdentityAPI")));
-
-builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<Context>();
-
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequiredLength = 8;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireDigit = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequiredUniqueChars = 1;
-
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    options.Lockout.MaxFailedAccessAttempts = 3;
-    options.Lockout.AllowedForNewUsers = false;
-
-    options.User.RequireUniqueEmail = true;
-});
+    options.UseNpgsql(databaseConnection, b => b.MigrationsAssembly("DeliveryAPI")));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -59,29 +45,77 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,
             IssuerSigningKey = signingKey,
             ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero
         };
     }
 );
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Public", builder =>
+    options.AddPolicy("AccessToDeliveries", builder =>
     {
         builder.RequireRole(
+            Role.Salesman.ToString(),
             Role.Courier.ToString(),
             Role.Buyer.ToString());
     });
 
-    options.AddPolicy("Admin", builder =>
+    options.AddPolicy("ChangingOfDeliveries", builder =>
     {
         builder.RequireRole(Role.Salesman.ToString());
     });
+
+    options.AddPolicy("Courier", builder =>
+    {
+        builder.RequireRole(Role.Courier.ToString());
+    });
 });
 
-builder.Services.AddScoped<ICustomUserStore, CustomUserStore>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+var rabbitMQSettings = builder.Configuration.GetSection("RabbitMQ");
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<CreateCourierConsumer>();
+    x.AddConsumer<CreateDeliveryConsumer>();
+    x.AddConsumer<CancelDeliveryConsumer>();
+
+    x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+    {
+        cfg.Host(rabbitMQSettings["Host"], settings =>
+        {
+            settings.Username(rabbitMQSettings["Username"]);
+            settings.Password(rabbitMQSettings["Password"]);
+        });
+
+        cfg.ReceiveEndpoint("createCourierQueue", ep =>
+        {
+            ep.PrefetchCount = 16;
+            ep.UseMessageRetry(r => r.Interval(2, 3000));
+            ep.ConfigureConsumer<CreateCourierConsumer>(provider);
+        });
+
+        cfg.ReceiveEndpoint("cancelDeliveryQueue", ep =>
+        {
+            ep.PrefetchCount = 16;
+            ep.UseMessageRetry(r => r.Interval(2, 3000));
+            ep.ConfigureConsumer<CancelDeliveryConsumer>(provider);
+        });
+
+        cfg.ReceiveEndpoint("createDeliveryQueue", ep =>
+        {
+            ep.PrefetchCount = 16;
+            ep.UseMessageRetry(r => r.Interval(2, 3000));
+            ep.ConfigureConsumer<CreateDeliveryConsumer>(provider);
+        });
+
+    }));
+});
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDeliveryService, DeliveryService>();
+builder.Services.AddScoped<ICourierService, CourierService>();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -114,21 +148,6 @@ builder.Services.AddSwaggerGen(options =>
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-
-var rabbitMQSettings = builder.Configuration.GetSection("RabbitMQ");
-
-builder.Services.AddMassTransit(x =>
-{
-    x.AddRequestClient<RabbitClient>();
-    x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
-    {
-        cfg.Host(rabbitMQSettings["Host"], settings =>
-        {
-            settings.Username(rabbitMQSettings["Username"]);
-            settings.Password(rabbitMQSettings["Password"]);
-        });
-    }));
 });
 
 var app = builder.Build();

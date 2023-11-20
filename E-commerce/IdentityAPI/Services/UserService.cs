@@ -9,6 +9,8 @@ using IdentityAPI.DataBase;
 using AutoMapper;
 using IdentityAPI.Models.Requests;
 using IdentityAPI.Models.Responses;
+using Rabbit.DTO;
+using Rabbit;
 using MassTransit;
 
 namespace IdentityAPI.Services
@@ -20,6 +22,8 @@ namespace IdentityAPI.Services
         private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly IMapper _mapper;
+
+        private readonly IBusControl _bus;
 
         public new ICustomUserStore Store { get; init; }
 
@@ -33,6 +37,7 @@ namespace IdentityAPI.Services
                             IdentityErrorDescriber errors,
                             IServiceProvider services,
                             IMapper mapper,
+                            IBusControl bus,
                             ILogger<UserManager<User>> logger,
                             RoleManager<IdentityRole> roleManager) : base(store,
                                                                       optionsAccessor,
@@ -48,6 +53,7 @@ namespace IdentityAPI.Services
             Store = store;
             _mapper = mapper;
             _roleManager = roleManager;
+            _bus = bus;
         }
 
         public async Task<User> GetById(Guid id)
@@ -84,6 +90,14 @@ namespace IdentityAPI.Services
                 return new ErrorsResponse { Errors = result.Errors };
             }
 
+            else if (userRole.Name == Role.Courier.ToString())
+            {
+                var courierRabbit = _mapper.Map<CourierRabbitDTO>(user);
+
+                await RabbitClient.Request(_bus, courierRabbit,
+                    new($"{_configuration["RabbitMQ:Host"]}/createCourierQueue"));
+            }
+
             try
             {
                 await AddToRoleAsync(user, userRole.Name);
@@ -99,6 +113,8 @@ namespace IdentityAPI.Services
             new Claim("UserId", user.Id),
             new Claim(ClaimTypes.Role, userRole.Name)
             };
+
+            var courier = _mapper.Map<CourierRabbitDTO>(user);
 
             await AddClaimsAsync(user, claims);
 

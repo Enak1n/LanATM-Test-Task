@@ -9,11 +9,13 @@ namespace DeliveryAPI.Infrastructure.UnitOfWork
         private readonly Context _context;
 
         public IDeliveryRepository Deliveries { get; private set; }
+        public ICourierRepository Couriers { get; private set; }
 
         public UnitOfWork(Context context)
         {
             _context = context;
             Deliveries = new DeliveryRepository(context);
+            Couriers = new CourierRepository(context);  
         }
 
         public void Dispose()

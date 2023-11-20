@@ -14,14 +14,24 @@ namespace DeliveryAPI.Service.Business
             _unitOfWork = unitOfWork;
         }
 
-        public Task Cancel(Guid id)
+        public async Task Cancel(Guid id)
         {
-            throw new NotImplementedException();
+            var delivery = await _unitOfWork.Deliveries.GetByIdAsync(id);
+
+            if (delivery == null)
+                throw new NotFoundException($"Delivery with Id {id} not found!");
+
+            delivery.IsCancel = true;
         }
 
-        public Task Complete(Guid id)
+        public async Task Complete(Guid id)
         {
-            throw new NotImplementedException();
+            var delivery = await _unitOfWork.Deliveries.GetByIdAsync(id);
+
+            if (delivery == null)
+                throw new NotFoundException($"Delivery with Id {id} not found!");
+
+            delivery.IsComplete = true;
         }
 
         public async Task<Delivery> Create(Delivery delivery)
@@ -46,9 +56,16 @@ namespace DeliveryAPI.Service.Business
             return delivery;
         }
 
-        public Task PickUpOrderFromWarehouse(Guid orderId, Guid courierId)
+        public async Task PickUpOrderFromWarehouse(Guid id, Guid courierId)
         {
-            throw new NotImplementedException();
+            var delivery = await _unitOfWork.Deliveries.GetByIdAsync(id);
+
+            if (delivery == null)
+            {
+                throw new NotFoundException($"Delivery with this Id {id} not found!");
+            }
+
+            delivery.CourierId = courierId;
         }
 
         public Task ReturnToWarehouse(Guid orderId)

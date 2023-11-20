@@ -34,7 +34,7 @@ namespace CatalogAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _unitOfWork.Products.GetAllAsync());
+            return Ok(await _productService.GetAll());
         }
 
         /// <summary>

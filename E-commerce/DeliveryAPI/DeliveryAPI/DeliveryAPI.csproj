@@ -11,18 +11,17 @@
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-		<PackageReference Include="MassTransit.RabbitMQ" Version="8.1.3-develop.1596" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.1.3-develop.1597" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.13" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.13">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.14">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.13">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.14">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.1" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
@@ -30,7 +29,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Rabbit\Rabbit\Rabbit.csproj" />
+		<ProjectReference Include="..\..\Rabbit\Rabbit\Rabbit.csproj" />
+		<ProjectReference Include="..\DeliveryAPI.Infrastructure\DeliveryAPI.Infrastructure.csproj" />
+		<ProjectReference Include="..\DeliveryAPI.Service.Business\DeliveryAPI.Service.Business.csproj" />
+		<ProjectReference Include="..\DeliveryAPI.Service.Interfaces\DeliveryAPI.Service.Interfaces.csproj" />
 	</ItemGroup>
 
 </Project>

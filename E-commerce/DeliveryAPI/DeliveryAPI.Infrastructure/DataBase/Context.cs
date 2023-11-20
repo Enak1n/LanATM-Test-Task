@@ -10,5 +10,6 @@ namespace DeliveryAPI.Infrastructure.DataBase
         }
 
         public DbSet<Delivery> Deliveries { get; set; }
+        public DbSet<Courier> Couriers { get; set; }
     }
 }

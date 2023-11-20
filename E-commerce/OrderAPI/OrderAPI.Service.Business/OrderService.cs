@@ -1,17 +1,25 @@
-﻿using OrderAPI.Domain.Entities;
+﻿using MassTransit;
+using Microsoft.Extensions.Configuration;
+using OrderAPI.Domain.Entities;
 using OrderAPI.Domain.Exceptions;
 using OrderAPI.Domain.Interfaces;
 using OrderAPI.Service.Interfaces;
+using Rabbit;
+using Rabbit.DTO;
 
 namespace OrderAPI.Service.Business
 {
     public class OrderService : IOrderService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBusControl _busControl;
+        private readonly IConfiguration _configuration;
 
-        public OrderService(IUnitOfWork unitOfWork)
+        public OrderService(IUnitOfWork unitOfWork, IBusControl busControl, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
+            _busControl = busControl;
+            _configuration = configuration;
         }
 
         public async Task<Order> Cancel(Guid id)
@@ -29,12 +37,21 @@ namespace OrderAPI.Service.Business
             await _unitOfWork.Orders.EditAsync(order);
             await _unitOfWork.SaveChangesAsync();
 
+            await RabbitClient.Request(_busControl, new CancelDeliveryRabbitDTO() { OrderId = order.Id },
+                        new($"{_configuration["RabbitMQ:Host"]}/cancelDeliveryQueue"));
+
             return order;
         }
 
         public async Task<Order> Create(Order order)
         {
             await _unitOfWork.Orders.AddAsync(order);
+
+            var deliveryDTO = new DeliveryRabbitDTO { AddressId = order.AddressId, OrderId = order.Id };
+
+
+            await RabbitClient.Request(_busControl, deliveryDTO,
+                new($"{_configuration["RabbitMQ:Host"]}/createDeliveryQueue"));
 
             return order;
         }

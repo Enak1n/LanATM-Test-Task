@@ -14,8 +14,4 @@ public class RegisterCourierDTORequest
     public string? Password { get; set; }
     [Required]
     public string? Name { get; set; }
-
-    [Phone]
-    [Required]
-    public string? PhoneNumber { get; set; }
 }

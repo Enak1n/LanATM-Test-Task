@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -94,6 +95,20 @@ builder.Services.AddSwaggerGen(options =>
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+var rabbitMQSettings = builder.Configuration.GetSection("RabbitMQ");
+builder.Services.AddMassTransit(x =>
+{
+
+    x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+    {
+        cfg.Host(rabbitMQSettings["Host"], settings =>
+        {
+            settings.Username(rabbitMQSettings["Username"]);
+            settings.Password(rabbitMQSettings["Password"]);
+        });
+    }));
 });
 
 var app = builder.Build();
