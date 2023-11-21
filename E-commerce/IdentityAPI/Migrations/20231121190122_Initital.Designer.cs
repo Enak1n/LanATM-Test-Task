@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IdentityAPI.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231115150538_RemoveAddress")]
-    partial class RemoveAddress
+    [Migration("20231121190122_Initital")]
+    partial class Initital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

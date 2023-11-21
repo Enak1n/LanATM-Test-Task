@@ -66,11 +66,32 @@ namespace DeliveryAPI.Service.Business
             }
 
             delivery.CourierId = courierId;
+            delivery.IsPickUp = true;
+
+            await _unitOfWork.Deliveries.EditAsync(delivery);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public Task ReturnToWarehouse(Guid orderId)
+        public async Task ReturnToWarehouse(Guid orderId)
         {
-            throw new NotImplementedException();
+            var delivery = await _unitOfWork.Deliveries.GetByIdAsync(orderId);
+
+            if (delivery == null)
+                throw new NotFoundException($"Delivery with this Id {orderId} not found!");
+
+            if (delivery.IsCancel == true)
+                throw new Exception($"Delivery with {orderId} already canceled!");
+
+            if (delivery.CourierId == null)
+                throw new Exception($"Delivery wasn't picked up by courier!");
+
+
+            delivery.CourierId = null;
+            delivery.IsPickUp = false;
+            delivery.IsCancel = true;
+
+            await _unitOfWork.Deliveries.EditAsync(delivery);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -145,7 +145,7 @@ namespace OrderAPI.Controllers
         {
             try
             {
-                var order = await _orderService.IsReceived(id);
+                var order = await _orderService.IsPaymented(id);
 
                 var res = _mapper.Map<OrderDTOResponse>(order);
 

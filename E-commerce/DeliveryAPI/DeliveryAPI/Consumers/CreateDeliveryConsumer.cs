@@ -22,6 +22,7 @@ namespace DeliveryAPI.Consumers
         {
             var content = context.Message;
             var delivery = _mapper.Map<Delivery>(content);
+            delivery.Id = content.OrderId;
             await _service.Create(delivery);
         }
     }

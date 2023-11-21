@@ -1,7 +1,10 @@
-﻿namespace DeliveryAPI.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DeliveryAPI.Domain.Entities
 {
     public class Delivery
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
         public Guid AddressId { get; set; }
         public Guid? CourierId { get; set; }

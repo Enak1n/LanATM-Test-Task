@@ -62,7 +62,7 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("ChangingOfDeliveries", builder =>
     {
-        builder.RequireRole(Role.Salesman.ToString());
+        builder.RequireRole(Role.Salesman.ToString(), Role.Courier.ToString());
     });
 
     options.AddPolicy("Courier", builder =>
@@ -78,6 +78,7 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumer<CreateCourierConsumer>();
     x.AddConsumer<CreateDeliveryConsumer>();
     x.AddConsumer<CancelDeliveryConsumer>();
+    x.AddConsumer<CompleteDeliveryConsumer>();
 
     x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
     {
@@ -106,6 +107,13 @@ builder.Services.AddMassTransit(x =>
             ep.PrefetchCount = 16;
             ep.UseMessageRetry(r => r.Interval(2, 3000));
             ep.ConfigureConsumer<CreateDeliveryConsumer>(provider);
+        });
+        
+        cfg.ReceiveEndpoint("completeDeliveryQueue", ep =>
+        {
+            ep.PrefetchCount = 16;
+            ep.UseMessageRetry(r => r.Interval(2, 3000));
+            ep.ConfigureConsumer<CompleteDeliveryConsumer>(provider);
         });
 
     }));

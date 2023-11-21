@@ -42,7 +42,6 @@ namespace DeliveryAPI.Migrations
             modelBuilder.Entity("DeliveryAPI.Domain.Entities.Delivery", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AddressId")

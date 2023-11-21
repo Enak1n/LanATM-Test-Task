@@ -41,7 +41,7 @@ namespace DeliveryAPI.Controllers
 
                 return Ok(res);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -65,7 +65,7 @@ namespace DeliveryAPI.Controllers
 
                 return Ok(res);
             }
-            catch(Exception ex)
+            catch (NotFoundException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -92,7 +92,7 @@ namespace DeliveryAPI.Controllers
 
                 return Ok(res);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -122,19 +122,68 @@ namespace DeliveryAPI.Controllers
             {
                 return NotFound(ex.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
+        /// <summary>
+        /// PickUp order
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <returns>Status about picking up the order</returns>
+        /// <response code="200">Return the success message about delivery</response>
+        /// <response code="404">Return the error if delivery not found</response>
         [HttpPut]
         [Authorize(Policy = "Courier")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PickUpOrderFromWarehouse(Guid id)
         {
-            var courierId = User.FindFirstValue("UserId");
+            try
+            {
+                Guid courierId = new Guid(User.FindFirstValue("UserId"));
+                
+                await _deliveryServie.PickUpOrderFromWarehouse(id, courierId);
 
-            return Ok();
+                return Ok($"Courier took order {id}");
+            }
+            catch(NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// PickUp order
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <returns>Status about return to warehouse</returns>
+        /// <response code="200">Return the success message about delivery</response>
+        /// <response code="404">Return the error if delivery not found</response>
+        /// <response code="400">Return the error if delivery has wrong properties</response>
+        [HttpPut]
+        [Authorize(Policy = "Courier")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ReturnToWarehouse(Guid id)
+        {
+            try
+            {
+                await _deliveryServie.ReturnToWarehouse(id);
+
+                return Ok($"Courier took back the order {id}");
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

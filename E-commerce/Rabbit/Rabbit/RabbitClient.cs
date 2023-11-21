@@ -2,6 +2,9 @@
 
 namespace Rabbit
 {
+    /// <summary>
+    /// https://masstransit.io/documentation/concepts/requests
+    /// </summary>
     public class RabbitClient
     {
         public static async Task<TResult> Request<TRequest, TResult>(IBusControl bus, TRequest request, Uri uri)

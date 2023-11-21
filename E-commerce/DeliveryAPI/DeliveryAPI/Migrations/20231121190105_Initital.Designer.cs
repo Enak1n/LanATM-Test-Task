@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DeliveryAPI.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231120174042_Initial1")]
-    partial class Initial1
+    [Migration("20231121190105_Initital")]
+    partial class Initital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,6 @@ namespace DeliveryAPI.Migrations
             modelBuilder.Entity("DeliveryAPI.Domain.Entities.Delivery", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AddressId")

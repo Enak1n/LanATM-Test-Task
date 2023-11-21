@@ -94,7 +94,7 @@ namespace OrderAPI.Service.Business
             if (order == null)
                 throw new NotFoundException($"Order with ID {id} not found!");
 
-            if(!order.IsPaymented)
+            if(order.IsPaymented)
                 throw new Exception("Order has been already paid!");
 
             if (order.IsCanceled)
@@ -104,6 +104,10 @@ namespace OrderAPI.Service.Business
 
             await _unitOfWork.Orders.EditAsync(order);
             await _unitOfWork.SaveChangesAsync();
+
+            var deliveryDTO = new DeliveryRabbitDTO { AddressId = order.AddressId, OrderId = order.Id };
+            await RabbitClient.Request(_busControl, deliveryDTO,
+                new($"{_configuration["RabbitMQ:Host"]}/completeDeliveryQueue"));
 
             return order;
         }
